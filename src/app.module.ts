@@ -30,7 +30,7 @@ import { HttpModule } from '@nestjs/axios';
 
     )
     ,
-    ConfigModule.forRoot({ load: [config], isGlobal: true })
+    ConfigModule.forRoot({ load: [config], isGlobal: true }),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -34,7 +34,7 @@ export class DomainScannerService {
     this.urlWHOIS = this.configService.get('whoIsURL');
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'domainScanCron' })
+  @Cron(CronExpression.EVERY_HOUR, { name: 'domainScanCron' })
   watch() {
     const startId = 1;
     this.scanDomains(startId);

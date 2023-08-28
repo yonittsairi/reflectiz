@@ -1,14 +1,16 @@
 import { DomainScansEntity } from 'src/domain-scanner/domain-scans.entity';
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, OneToMany, Unique } from 'typeorm';
 
 
 @Entity({ name: 'domain' })
-export class DomainEntity  {
+@Unique('UQ_DOMAIN', ['domainName'])
+export class DomainEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
   @CreateDateColumn({ nullable: true })
   createdAt?: Date;
+
   @Column({ name: 'domain_name' })
   domainName: string;
 
