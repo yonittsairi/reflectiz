@@ -23,8 +23,57 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
+This a NestJs application with sql database which collects data on domains 
+every 1st of the month the system will gather data on it's domains and save it for your use.
+
+## Design
+app is composed of 3 modules -
+1. domain module- incharge on the domains creation
+2. domain scans module- incharge of scanning the domains and saving the data we have gathered
+3. recent domain scans module- incharge of updating the latest data collected
+
+## API'S
+![api explanation](image.png)
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## DB Creation
+please run the following scripts
+
+CREATE DATABASE `app_schema` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+CREATE TABLE `domain` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `domain_name` varchar(100) NOT NULL,
+  `createdAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `domain_name_UNIQUE` (`domain_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `domain_scans` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `data` varchar(6000) DEFAULT NULL,
+  `createdAt` timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `source` varchar(45) DEFAULT NULL,
+  `domainId` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `domain_id_idx` (`domainId`),
+  CONSTRAINT `domain_id` FOREIGN KEY (`domainId`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=844 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `recent_domain_scan` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `data` varchar(6000) DEFAULT NULL,
+  `createdAt` timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updatedAt` timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `source` varchar(45) DEFAULT NULL,
+  `domainId` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `domain_id_idx` (`domainId`),
+  CONSTRAINT `domain_idx` FOREIGN KEY (`domainId`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
 
 ## Installation
 
