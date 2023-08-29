@@ -6,7 +6,7 @@ export class DomainScansEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @CreateDateColumn({ nullable: true })
+  @CreateDateColumn({ nullable: true, default: new Date })
   createdAt?: Date;
 
   @Column()
