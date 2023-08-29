@@ -43,7 +43,7 @@ export class DomainService {
       if (!this.isValidDomain(createDomainDto?.domainName)) {
         reject('Invalid Domain name')
       }
-      resolve(this.repository.save(createDomainDto).then(x => x).catch(x => x))
+      resolve(this.repository.save(createDomainDto).then(res => res).catch(err => err?.driverError))
     })
 
   }
