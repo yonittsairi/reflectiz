@@ -1,9 +1,10 @@
-import { Injectable, HttpStatus, forwardRef, Inject } from '@nestjs/common';
-import { MoreThan, Repository, getConnection } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { MoreThan, Repository } from 'typeorm';
 import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DomainEntity } from './domain.entity';
-import { CreateDomainDto } from './dto/create-domain.dto';
+import { MessageDto } from 'src/generalDto/messageDto';
+import { CreateDomainDto } from './dto/create-domain.dto ';
 @Injectable()
 export class DomainService {
 
@@ -15,7 +16,7 @@ export class DomainService {
     return await this.repository.find({ where: { id: MoreThan(startId) }, take: limit })
   }
 
-  getDomainInfo(name: any) {
+  getDomainInfo(name: any): Promise<DomainEntity | MessageDto> {
     return new Promise((resolve, reject) => {
       this.repository.findOne({ where: { domainName: name }, relations: ['recentDomainScans'] })
         .then(data => {

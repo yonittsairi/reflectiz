@@ -1,6 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DomainScansEntity } from './domain-scans.entity';
 import { DomainService } from 'src/domain/domain.service';
@@ -9,16 +9,17 @@ import { ConfigService } from '@nestjs/config/dist/config.service';
 import { DomainEntity } from 'src/domain/domain.entity';
 import { firstValueFrom } from 'rxjs';
 import { RecentDomainScanService } from 'src/recent-domain-scan/recent-domain-scan.service';
-
+import { CronJob } from 'cron';
 
 @Injectable()
 export class DomainScansService {
   private readonly logger = new Logger(DomainScansService.name);
 
-  private apiKeyVirusTotal
-  private urlVirusTotal
-  private apiKeyWHOIS
-  private urlWHOIS
+  private apiKeyVirusTotal: string
+  private urlVirusTotal: string
+  private apiKeyWHOIS: string
+  private urlWHOIS: string
+  private cronExpression: "0 0 1 * *";
   constructor(
     @InjectRepository(DomainScansEntity)
     public repository: Repository<DomainScansEntity>,
@@ -28,6 +29,7 @@ export class DomainScansService {
     private recentDomainScanService: RecentDomainScanService,
     private configService: ConfigService,
     private readonly httpService: HttpService,
+    private schedulerRegistry: SchedulerRegistry
 
 
   ) {
@@ -35,13 +37,23 @@ export class DomainScansService {
     this.urlVirusTotal = this.configService.get('virustotalURL');
     this.apiKeyWHOIS = this.configService.get('whoIsAPIKEY');
     this.urlWHOIS = this.configService.get('whoIsURL');
+    this.cronExpression = this.configService.get('cronExpression', "0 0 1 * *")
+
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_10AM, { name: 'domainScanCron' })
-  watch() {
-    const startId = 1;
-    this.scanDomains(startId);
+  onModuleInit() {
+    const job = new CronJob(this.cronExpression, () => {
+
+      const startId = 1;
+      this.scanDomains(startId);
+
+    });
+
+    this.schedulerRegistry.addCronJob('scan', job);
+    job.start();
   }
+
+
 
   async callVirusTotal(domainName: string) {
     const req = this.httpService
