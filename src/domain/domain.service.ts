@@ -6,15 +6,49 @@ import { DomainEntity } from './domain.entity';
 import { CreateDomainDto } from './dto/create-domain.dto';
 @Injectable()
 export class DomainService {
-  create(createDomainDto: CreateDomainDto) {
-    return this.repository.save(createDomainDto).then(x => x).catch(x => x)
-  }
+
 
   @InjectRepository(DomainEntity)
   public repository: Repository<DomainEntity>;
 
   async getDomains(startId: number, limit: number): Promise<DomainEntity[]> {
     return await this.repository.find({ where: { id: MoreThan(startId) }, take: limit })
+  }
+
+  getDomainInfo(name: any) {
+    return new Promise((resolve, reject) => {
+      this.repository.findOne({ where: { domainName: name }, relations: ['recentDomainScans'] })
+        .then(data => {
+          if (!data) {
+            this.repository.insert({ domainName: name })
+              .then((res) => {
+                return resolve({ message: `no data exist on domain ${name} please try again later` })
+              }
+
+              )
+          } else {
+            return resolve(data)
+          }
+        }).catch((res) => {
+          reject(res)
+        })
+
+
+
+    })
+  }
+  create(createDomainDto: CreateDomainDto) {
+    return new Promise<void>((resolve, reject) => {
+      if (!this.isValidDomain(createDomainDto.domainName)) {
+        reject('InValid Domain name')
+      }
+      resolve(this.repository.save(createDomainDto).then(x => x).catch(x => x))
+    })
+
+  }
+  isValidDomain(domain) {
+    const domainRegex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return domainRegex.test(domain);
   }
 
 

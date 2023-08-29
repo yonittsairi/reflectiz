@@ -8,11 +8,12 @@ import { HttpService } from '@nestjs/axios/dist';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { DomainEntity } from 'src/domain/domain.entity';
 import { firstValueFrom } from 'rxjs';
+import { RecentDomainScanService } from 'src/recent-domain-scan/recent-domain-scan.service';
 
 
 @Injectable()
-export class DomainScannerService {
-  private readonly logger = new Logger(DomainScannerService.name);
+export class DomainScansService {
+  private readonly logger = new Logger(DomainScansService.name);
 
   private apiKeyVirusTotal
   private urlVirusTotal
@@ -23,6 +24,8 @@ export class DomainScannerService {
     public repository: Repository<DomainScansEntity>,
     @Inject(DomainService)
     private domainService: DomainService,
+    @Inject(RecentDomainScanService)
+    private recentDomainScanService: RecentDomainScanService,
     private configService: ConfigService,
     private readonly httpService: HttpService,
 
@@ -34,7 +37,7 @@ export class DomainScannerService {
     this.urlWHOIS = this.configService.get('whoIsURL');
   }
 
-  @Cron(CronExpression.EVERY_HOUR, { name: 'domainScanCron' })
+  @Cron(CronExpression.EVERY_DAY_AT_10AM, { name: 'domainScanCron' })
   watch() {
     const startId = 1;
     this.scanDomains(startId);
@@ -50,7 +53,7 @@ export class DomainScannerService {
       })
 
     const data = (await firstValueFrom(req).then((data) => (data.data)).catch((e) =>
-      this.logger.error(JSON.stringify(e))
+      this.logger.error('callVirusTotal' + JSON.stringify(e))
     ))
     return data
   }
@@ -62,7 +65,7 @@ export class DomainScannerService {
       })
       ;
     return await firstValueFrom(req).then((data) => data.data).catch((e) =>
-      this.logger.error(JSON.stringify(e)))
+      this.logger.error('callVirusTotal' + JSON.stringify(e)))
   }
 
   async scanDomains(startId: number) {
@@ -100,7 +103,9 @@ export class DomainScannerService {
       return
     }
     const entity: DomainScansEntity = { data: JSON.stringify(text), domainId: id, source }
-    this.repository.insert(entity)
+    this.repository.insert(entity).then(() => {
+      this.recentDomainScanService.saveRecentDomainInfo(entity)
+    })
       .catch((e) => {
         this.logger.error(e)
       })

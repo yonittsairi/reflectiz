@@ -1,4 +1,5 @@
 import { DomainScansEntity } from 'src/domain-scanner/domain-scans.entity';
+import { RecentDomainScanEntity } from 'src/recent-domain-scan/recent-domain-scan.entity';
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, OneToMany, Unique } from 'typeorm';
 
 
@@ -16,4 +17,7 @@ export class DomainEntity {
 
   @OneToMany(() => DomainScansEntity, (domainscan) => domainscan.domain)
   domainScans: DomainScansEntity[];
+
+  @OneToMany(() => RecentDomainScanEntity, (recentdomainScan) => recentdomainScan.domain)
+  recentDomainScans: RecentDomainScanEntity[];
 }

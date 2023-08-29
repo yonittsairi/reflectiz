@@ -1,8 +1,10 @@
-import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { DomainScansEntity } from 'src/domain-scanner/domain-scans.entity';
 import { DomainEntity } from 'src/domain/domain.entity';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, OneToMany, Unique, ManyToOne, UpdateDateColumn } from 'typeorm';
 
-@Entity({ name: 'domain_scans' })
-export class DomainScansEntity {
+
+@Entity({ name: 'recent_domain_scan' })
+export class RecentDomainScanEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 

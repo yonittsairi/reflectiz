@@ -10,4 +10,4 @@ import { DomainController } from './domain.controller';
   exports: [DomainService],
   controllers: [DomainController],
 })
-export class DomainModule {}
+export class DomainModule { }
