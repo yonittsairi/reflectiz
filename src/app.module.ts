@@ -33,7 +33,6 @@ import { RecentDomainScanEntity } from './recent-domain-scan/recent-domain-scan.
 
     )
     ,
-    ConfigModule.forRoot({ load: [config], isGlobal: true }),
     RecentDomainScanModule,
   ],
   controllers: [AppController],
