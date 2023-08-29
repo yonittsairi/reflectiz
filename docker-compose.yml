@@ -1,21 +1,28 @@
 version: '3'
 services:
-  nestjs-app:
+  nest-app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
+    volumes:
+      - .:/app
+    command: npm run start:dev
     depends_on:
       - mysql-db
+
   mysql-db:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: nestjsdb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app_schema
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     ports:
-      - "3306:3306"
+      - '3307:3306'
     volumes:
       - mysql-data:/var/lib/mysql
+
 volumes:
   mysql-data:

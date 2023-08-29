@@ -1,20 +1,50 @@
-# Use Node.js 14 as the base image
-FROM node:14
 
-# Set the working directory inside the container
+# Building layer
+FROM node:18-alpine as development
+
+# Optional NPM automation (auth) token build argument
+# ARG NPM_TOKEN
+
+# Optionally authenticate NPM registry
+# RUN npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
+# Copy configuration files
+COPY tsconfig*.json ./
 COPY package*.json ./
 
-# Install project dependencies
-RUN npm install
+# Install dependencies from package-lock.json, see https://docs.npmjs.com/cli/v7/commands/npm-ci
+RUN npm ci
 
-# Copy the rest of the application code to the container
-COPY . .
+# Copy application sources (.ts, .tsx, js)
+COPY src/ src/
 
-# Expose the port your Nest.js application will listen on
+# Build application (produces dist/ folder)
+RUN npm run build
+
+# Runtime (production) layer
+FROM node:18-alpine as production
+
+# Optional NPM automation (auth) token build argument
+# ARG NPM_TOKEN
+
+# Optionally authenticate NPM registry
+# RUN npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+
+WORKDIR /app
+
+# Copy dependencies files
+COPY package*.json ./
+
+# Install runtime dependecies (without dev/test dependecies)
+RUN npm ci --omit=dev
+
+# Copy production build
+COPY --from=development /app/dist/ ./dist/
+
+# Expose application port
 EXPOSE 3000
 
-# Start the Nest.js application
-CMD ["npm", "run", "start:prod"]
+# Start application
+CMD [ "node", "dist/main.js" ]

@@ -95,8 +95,7 @@ export class DomainScansService {
   }
 
   async retrieveDomainData(domains) {
-    for (const domain of domains) {
-      const { domainName, id } = domain
+    domains.map(({ domainName, id }) => {
       this.callVirusTotal(domainName).then((data) =>
 
         this.saveDomainData(id, data?.data?.attributes?.last_analysis_stats, 'virusTotal'))
@@ -105,7 +104,8 @@ export class DomainScansService {
         this.saveDomainData(id, data?.WhoisRecord?.strippedText, 'whoIs'))
 
 
-    }
+    })
+
   }
 
 

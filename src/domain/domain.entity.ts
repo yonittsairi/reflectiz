@@ -12,7 +12,7 @@ export class DomainEntity {
   @CreateDateColumn({ nullable: true })
   createdAt?: Date;
 
-  @Column({ name: 'domain_name' })
+  @Column({ name: 'domain_name', nullable: false })
   domainName: string;
 
   @OneToMany(() => DomainScansEntity, (domainscan) => domainscan.domain)

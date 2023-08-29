@@ -8,8 +8,12 @@ export class RecentDomainScanEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @CreateDateColumn({ nullable: true })
+  @CreateDateColumn({ default: new Date })
   createdAt?: Date;
+
+  @UpdateDateColumn({ default: new Date })
+  updatedAt?: Date;
+
 
   @Column()
   data: string;

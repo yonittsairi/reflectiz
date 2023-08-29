@@ -25,7 +25,7 @@ export class RecentDomainScanService {
                             this.logger.error(e)
                         })
                 } else {
-                    this.repository.update({ id: res.id }, { ...entity })
+                    this.repository.update({ id: res.id }, { ...entity, updatedAt: new Date() })
                         .catch((e) => {
                             this.logger.error(e)
                         })

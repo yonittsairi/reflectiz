@@ -41,7 +41,7 @@ export class DomainService {
   create(createDomainDto: CreateDomainDto) {
     return new Promise<void>((resolve, reject) => {
       if (!this.isValidDomain(createDomainDto.domainName)) {
-        reject('InValid Domain name')
+        reject('Invalid Domain name')
       }
       resolve(this.repository.save(createDomainDto).then(x => x).catch(x => x))
     })
