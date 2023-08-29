@@ -6,12 +6,13 @@ export default class TypeOrmConfig {
   static getOrmConfig(configService: ConfigService): TypeOrmModuleOptions {
     return {
       type: 'mysql',
+      retryAttempts: 5,
       host: configService.get('DB_HOST') || 'localhost',
       port: configService.get('DB_PORT') || 3306,
       username: configService.get('DB_USERNAME'),
       password: configService.get('DB_PASSWORD'),
       database: configService.get('DB_NAME'),
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      entities: ['dist/**/*.entity.{ts,js}'],
       extra: { timezone: '+00:00' },
       logging: true,
       synchronize: false,
