@@ -55,7 +55,7 @@ export class DomainScansService {
 
 
 
-  async callVirusTotal(domainName: string) {
+  async callVirusTotal(domainName: string): Promise<any> {
     const req = this.httpService
       .get(this.urlVirusTotal + domainName, {
         headers: {
@@ -70,17 +70,17 @@ export class DomainScansService {
     return data
   }
 
-  async callWHOIS(domainName) {
+  async callWHOIS(domainName): Promise<any> {
     const req = this.httpService
       .get(`${this.urlWHOIS}apiKey=${this.apiKeyWHOIS}&domainName=${domainName}&outputFormat=JSON`, {
         headers: { accept: 'application/json' },
       })
       ;
     return await firstValueFrom(req).then((data) => data.data).catch((e) =>
-      this.logger.error('callVirusTotal' + JSON.stringify(e)))
+      this.logger.error('callWHOIS' + JSON.stringify(e)))
   }
 
-  async scanDomains(startId: number) {
+  async scanDomains(startId: number): Promise<void> {
     if (!startId) {
       return;
     }
@@ -110,7 +110,7 @@ export class DomainScansService {
 
 
 
-  saveDomainData(id: number, text: any, source: string) {
+  saveDomainData(id: number, text: any, source: string): void {
     if (!text) {
       return
     }

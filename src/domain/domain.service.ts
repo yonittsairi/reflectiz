@@ -38,16 +38,16 @@ export class DomainService {
 
     })
   }
-  create(createDomainDto: CreateDomainDto) {
-    return new Promise<void>((resolve, reject) => {
-      if (!this.isValidDomain(createDomainDto.domainName)) {
+  create(createDomainDto: CreateDomainDto): Promise<DomainEntity | string> {
+    return new Promise<DomainEntity | string>((resolve, reject) => {
+      if (!this.isValidDomain(createDomainDto?.domainName)) {
         reject('Invalid Domain name')
       }
       resolve(this.repository.save(createDomainDto).then(x => x).catch(x => x))
     })
 
   }
-  isValidDomain(domain) {
+  isValidDomain(domain: string): boolean {
     const domainRegex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return domainRegex.test(domain);
   }

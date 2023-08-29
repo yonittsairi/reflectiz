@@ -11,7 +11,7 @@ export class RecentDomainScanService {
     @InjectRepository(RecentDomainScanEntity)
     public repository: Repository<RecentDomainScanEntity>
 
-    saveRecentDomainInfo(newEntity) {
+    saveRecentDomainInfo(newEntity): void {
         const { domainId, data, source } = newEntity
         if (!data) {
             return
