@@ -21,7 +21,7 @@ export class DomainService {
       this.repository.findOne({ where: { domainName: name }, relations: ['recentDomainScans'] })
         .then(data => {
           if (!data) {
-            this.repository.insert({ domainName: name })
+            this.create({ domainName: name })
               .then((res) => {
                 return resolve({ message: `no data exist on domain ${name} please try again later` })
               }
